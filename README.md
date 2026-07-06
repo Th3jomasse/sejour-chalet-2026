@@ -8,7 +8,10 @@ Planification du séjour au chalet **ChaletMylène** — repas, collations et li
 ## Contenu
 
 - [`plan-chalet.md`](plan-chalet.md) — plan des repas (vendredi → dimanche), collations
-  et listes d'achats organisées par magasin : 🥩 Boucherie · 🍷 SAQ · 🛍️ Épicerie.
+  et listes d'achats organisées par magasin : 🥩 Boucherie · 🍷 SAQ · 🛍️ Épicerie
+  (**quantités pour 4 personnes**).
+- [`docs/app-ia-planification.md`](docs/app-ia-planification.md) — 🤖 vision de l'app IA
+  de planification de repas entre amis, avec recommandations selon l'envie du moment.
 
 ## Partage des dépenses
 

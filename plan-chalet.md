@@ -5,6 +5,7 @@
 
 > Hypothèses (à ajuster au besoin) : BBQ disponible au chalet, une **sortie en bateau le samedi**
 > (donc dîner transportable + glacière), aucune allergie signalée, café le matin.
+> **Quantités calculées pour 4 personnes.**
 > Astuce : entrez les factures **Boucherie / SAQ / Épicerie** dans **SplitMoney** pour partager
 > les coûts entre les 4 à la fin du séjour.
 
@@ -38,46 +39,49 @@ Chips, noix mélangées, popcorn, barres tendres, biscuits, chocolat, fruits (ba
 
 ---
 
-## 🛒 Listes d'achats (par magasin)
+## 🛒 Listes d'achats (par magasin) — pour 4 personnes
 
 ### 🥩 Boucherie
-- [ ] 4 steaks (vendredi soir)
-- [ ] Poitrines de poulet ×4–6 (brochettes samedi + wraps vendredi/samedi)
-- [ ] Cubes de bœuf à brochettes (~700 g)
-- [ ] Bacon (1 paquet)
-- [ ] 4 boulettes de burger + 4 pains (dimanche)
+- [ ] Steaks — **4** (~250–300 g chacun, souper vendredi)
+- [ ] Poitrines de poulet — **6** (~1,2 kg : wraps vendredi + sandwichs bateau + brochettes)
+- [ ] Cubes de bœuf à brochettes — **~700 g**
+- [ ] Bacon — **1 paquet** (~375 g)
+- [ ] Boulettes de burger — **4** + **4 pains** (dimanche)
 
 ### 🍷 SAQ
-- [ ] Vin rouge ×2 (avec les grillades)
-- [ ] Vin blanc ou rosé ×2 (apéro / bateau)
-- [ ] Bière ×24
-- [ ] Gin ou vodka ×1 (cocktails)
+- [ ] Vin rouge — **2 bouteilles** (avec les grillades)
+- [ ] Vin blanc ou rosé — **2 bouteilles** (apéro / bateau)
+- [ ] Bière — **1 caisse de 24**
+- [ ] Gin ou vodka — **1 bouteille (750 ml)** (cocktails)
 
 ### 🛍️ Épicerie
+
 **Déjeuners**
-- [ ] Œufs (1 douzaine), pain à rôties, bagels
-- [ ] Mélange à crêpes + sirop d'érable
-- [ ] Café, lait, jus d'orange
+- [ ] Œufs — **1 douzaine**
+- [ ] Pain à rôties — **1** · Bagels — **1 paquet (6)**
+- [ ] Mélange à crêpes — **1 boîte** · Sirop d'érable — **1 (250 ml)**
+- [ ] Café — **1 paquet** · Lait — **2 L** · Jus d'orange — **2 L**
 
 **Repas & accompagnements**
-- [ ] Tortillas/wraps (2 paquets)
-- [ ] Pommes de terre, maïs en épi ×4, poivrons, oignons
-- [ ] Salade verte + légumes crudités (carottes, céleri, concombre)
-- [ ] Pâtes (salade de pâtes) + vinaigrette
-- [ ] Fromage + craquelins
-- [ ] Houmous / trempette
+- [ ] Tortillas/wraps — **2 paquets** (vendredi + bateau)
+- [ ] Pommes de terre — **~1,5 kg** · Maïs en épi — **4**
+- [ ] Poivrons — **3** · Oignons — **2** (brochettes)
+- [ ] Salade verte — **2 sacs** · Crudités (carottes, céleri, concombre) — **1 de chaque**
+- [ ] Pâtes (salade de pâtes) — **1 boîte (450 g)** + vinaigrette — **1**
+- [ ] Fromage — **1 bloc** + craquelins — **1 boîte**
+- [ ] Houmous / trempette — **2 contenants**
 
 **Collations & fruits**
-- [ ] Chips, popcorn, noix mélangées
-- [ ] Barres tendres, biscuits, chocolat
-- [ ] Raisins, bananes, petits fruits
+- [ ] Chips — **2 sacs** · Popcorn — **1** · Noix mélangées — **1 sac**
+- [ ] Barres tendres — **1 boîte** · Biscuits — **1 paquet** · Chocolat — **2 tablettes**
+- [ ] Raisins — **1 grappe** · Bananes — **6** · Petits fruits — **1 casseau**
 
 **Condiments & essentiels**
-- [ ] Mayo, moutarde, ketchup, sauce BBQ, huile, sel/poivre
-- [ ] Beurre
-- [ ] Mixers (tonic / soda / jus pour cocktails)
-- [ ] Glace pour la glacière 🧊
-- [ ] Essuie-tout, sacs à ordures, sacs Ziploc
+- [ ] Mayo, moutarde, ketchup, sauce BBQ, huile, sel/poivre (**1 de chaque** — ou vérifier au chalet)
+- [ ] Beurre — **1**
+- [ ] Mixers (tonic / soda / jus pour cocktails) — **2 L**
+- [ ] Glace pour la glacière 🧊 — **2 sacs**
+- [ ] Essuie-tout — **1** · Sacs à ordures — **1 rouleau** · Sacs Ziploc — **1 boîte**
 
 ---
 
