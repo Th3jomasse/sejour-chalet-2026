@@ -15,9 +15,12 @@ App complète connectée au projet Firebase **ChaletMylène** :
 - **Vote de groupe** 👍/👎 sur chaque repas + bouton « Régénérer selon les votes »
 
 Structure : `firebase.json`, `.firebaserc`, `firestore.rules`, `functions/` (Cloud Function),
-`public/` (l'app). Avant de déployer, remplace `firebaseConfig` dans `public/index.html`
-par la config de ton app web Firebase, et enregistre la clé Claude comme secret :
-`firebase functions:secrets:set ANTHROPIC_API_KEY`. Puis `firebase deploy`.
+`public/` (l'app). La config Firebase est chargée **automatiquement** depuis l'hébergement
+(`/__/firebase/init.json`) — rien à coller. Il suffit d'enregistrer la clé Claude comme secret
+(`firebase functions:secrets:set ANTHROPIC_API_KEY`) puis `firebase deploy`.
+
+Prérequis : forfait **Blaze** (nécessaire pour les Cloud Functions ; quota gratuit généreux),
+et dans la console : **Firestore Database** créée + **Authentication → Anonymous** activée.
 
 ### Version standalone — `index.html`
 Même app, mais chaque personne entre **sa propre clé API Claude** (stockée localement).

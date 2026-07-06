@@ -120,23 +120,9 @@
   import { getFirestore, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
-  // ⚠️ REMPLACE cet objet par la config de TON app web Firebase
-  // (Console Firebase → ⚙️ Paramètres du projet → Tes applications → Web → Config).
-  const firebaseConfig = {
-    apiKey: "REMPLACE_MOI",
-    authDomain: "chaletmylene.firebaseapp.com",
-    projectId: "chaletmylene",
-    storageBucket: "chaletmylene.appspot.com",
-    messagingSenderId: "REMPLACE_MOI",
-    appId: "REMPLACE_MOI"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const functions = getFunctions(app, "us-central1");
-  const generatePlan = httpsCallable(functions, "generatePlan");
-  const sejourRef = doc(db, "sejours", "chalet");
+  // La config Firebase est chargée automatiquement depuis Firebase Hosting
+  // (/__/firebase/init.json) — rien à coller à la main.
+  let auth, db, generatePlan, sejourRef;
 
   const $ = (id) => document.getElementById(id);
   let uid = null;
@@ -148,17 +134,36 @@
   const budgetLabels = { "1": "économique", "2": "équilibré", "3": "gastronomie" };
   const effortLabels = { "1": "minimal (peu de cuisine)", "2": "normal", "3": "on aime cuisiner" };
 
-  signInAnonymously(auth).catch(e => setError("Auth échouée : " + e.message));
-  onAuthStateChanged(auth, (user) => {
-    if (!user) return;
-    uid = user.uid;
-    $("status").textContent = "Connecté · synchronisé en temps réel";
-    $("generateBtn").disabled = false;
-    onSnapshot(sejourRef, (snap) => {
-      currentData = snap.exists() ? snap.data() : null;
-      render();
-    }, (e) => setError("Sync : " + e.message));
-  });
+  async function boot() {
+    let cfg;
+    try {
+      const r = await fetch("/__/firebase/init.json");
+      if (!r.ok) throw new Error("init.json " + r.status);
+      cfg = await r.json();
+    } catch (e) {
+      $("status").textContent = "";
+      setError("Config Firebase introuvable. Sers l'app via Firebase Hosting (après « firebase deploy ») ou en local avec « firebase serve ».");
+      return;
+    }
+    const app = initializeApp(cfg);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    generatePlan = httpsCallable(getFunctions(app, "us-central1"), "generatePlan");
+    sejourRef = doc(db, "sejours", "chalet");
+
+    signInAnonymously(auth).catch(e => setError("Auth échouée : " + e.message));
+    onAuthStateChanged(auth, (user) => {
+      if (!user) return;
+      uid = user.uid;
+      $("status").textContent = "Connecté · synchronisé en temps réel";
+      $("generateBtn").disabled = false;
+      onSnapshot(sejourRef, (snap) => {
+        currentData = snap.exists() ? snap.data() : null;
+        render();
+      }, (e) => setError("Sync : " + e.message));
+    });
+  }
+  boot();
 
   function collectParams(feedback) {
     return {
