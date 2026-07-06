@@ -3,145 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planif Repas — entre amis</title>
+<meta name="theme-color" content="#1f4d3a">
+<title>Planif Repas — ChaletMylène</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --emerald: #059669;
-    --emerald-dark: #047857;
-    --emerald-light: #d1fae5;
-    --bg: #f8faf9;
-    --card: #ffffff;
-    --text: #1f2937;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --boucherie: #dc2626;
-    --saq: #7c3aed;
-    --epicerie: #059669;
+    --pine: #1f4d3a;
+    --pine-deep: #163a2b;
+    --moss: #3d7a5c;
+    --amber: #c9682e;
+    --amber-soft: #e3a86b;
+    --cream: #faf5ec;
+    --cream-2: #f3 ecdf;
+    --surface: #fffdf8;
+    --ink: #26221d;
+    --muted: #7c746a;
+    --line: #e7ded0;
+    --boucherie: #b23b3b;
+    --saq: #7b4b8a;
+    --epicerie: #2f7d54;
+    --shadow: 0 1px 2px rgba(31,45,35,.04), 0 8px 24px rgba(31,45,35,.06);
+    --shadow-lg: 0 4px 12px rgba(31,45,35,.08), 0 20px 48px rgba(31,45,35,.12);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --pine: #6cc79a; --pine-deep: #0f1f18; --moss: #8fd9b4;
+      --amber: #e3944f; --amber-soft: #b06a33;
+      --cream: #14140f; --cream-2: #191913;
+      --surface: #1e1e17; --ink: #f2ead9; --muted: #a49a8a; --line: #322f26;
+      --boucherie: #e08585; --saq: #c39ad0; --epicerie: #7fd3a3;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,.4), 0 20px 48px rgba(0,0,0,.5);
+    }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-    padding: 0 0 60px;
+    font-family: "Instrument Sans", -apple-system, system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
   }
-  header {
-    background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
-    color: #fff;
-    padding: 20px 16px;
+  .serif { font-family: "Fraunces", Georgia, serif; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: linear-gradient(160deg, var(--pine) 0%, var(--pine-deep) 100%);
+    color: #f6efe2;
+    padding: 46px 22px 60px;
+    overflow: hidden;
     text-align: center;
   }
-  header h1 { font-size: 1.35rem; margin-bottom: 4px; }
-  header p { font-size: 0.85rem; opacity: 0.9; }
-  .container { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .hero::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 40px;
+    background: var(--cream);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .hero .badge {
+    display: inline-block; font-size: .68rem; letter-spacing: .18em; font-weight: 600;
+    text-transform: uppercase; color: var(--amber-soft);
+    border: 1px solid rgba(227,168,107,.4); padding: 5px 12px; border-radius: 100px; margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 2rem; line-height: 1.12;
+    letter-spacing: -.01em; margin-bottom: 12px;
+  }
+  .hero h1 em { font-style: italic; color: var(--amber-soft); }
+  .hero p { font-size: .98rem; opacity: .82; max-width: 30ch; margin: 0 auto; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 600px; margin: -26px auto 0; padding: 0 18px 80px; position: relative; z-index: 1; }
   .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; margin-bottom: 18px; box-shadow: var(--shadow);
   }
-  .card h2 { font-size: 1rem; margin-bottom: 12px; color: var(--emerald-dark); }
-  label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
-  input[type="text"], input[type="number"], input[type="password"], textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    margin-bottom: 12px;
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .step-num {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--pine); color: #fff; display: grid; place-items: center;
+    font-weight: 600; font-size: .85rem;
   }
-  textarea { min-height: 60px; resize: vertical; }
-  .row { display: flex; gap: 10px; }
-  .row > div { flex: 1; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  @media (prefers-color-scheme: dark) { .step-num { color: #0f1f18; } }
+  .card-head h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.18rem; letter-spacing: -.01em; }
+
+  label { display: block; font-size: .78rem; font-weight: 600; margin-bottom: 7px; color: var(--muted); letter-spacing: .01em; }
+  input[type=text], input[type=number], input[type=password], textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px;
+    font-size: 1rem; font-family: inherit; margin-bottom: 16px; background: var(--cream);
+    color: var(--ink); transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(61,122,92,.14); }
+  textarea { min-height: 66px; resize: vertical; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 6px; }
   .chip {
-    padding: 8px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    background: #fff;
-    font-size: 0.85rem;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.15s;
+    padding: 9px 15px; border: 1.5px solid var(--line); border-radius: 100px;
+    background: var(--cream); font-size: .9rem; font-weight: 500; cursor: pointer; user-select: none;
+    transition: all .15s ease; color: var(--ink);
   }
-  .chip.active { background: var(--emerald); color: #fff; border-color: var(--emerald); }
-  .slider-group { margin-bottom: 16px; }
-  .slider-group .labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
-  input[type="range"] { width: 100%; accent-color: var(--emerald); }
-  button.primary {
-    width: 100%;
-    padding: 14px;
-    background: var(--emerald);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
+  .chip:active { transform: scale(.96); }
+  .chip.active { background: var(--pine); color: #fff; border-color: var(--pine); box-shadow: var(--shadow); }
+  @media (prefers-color-scheme: dark) { .chip.active { color: #0f1f18; } }
+
+  .slider-group { margin-top: 20px; }
+  .slider-group .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .slider-group .val { font-size: .82rem; font-weight: 600; color: var(--amber); }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 100px;
+    background: var(--line); outline: none;
   }
-  button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
-  button.primary:active { background: var(--emerald-dark); }
-  .settings-toggle {
-    background: none; border: none; color: var(--emerald-dark);
-    font-size: 0.85rem; cursor: pointer; text-decoration: underline; padding: 0;
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--pine);
+    border: 3px solid var(--surface); box-shadow: var(--shadow); cursor: pointer;
   }
+  input[type=range]::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--pine);
+    border: 3px solid var(--surface); box-shadow: var(--shadow); cursor: pointer;
+  }
+  .ticks { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: 7px; }
+
+  /* ---------- Buttons ---------- */
+  .btn-primary {
+    width: 100%; padding: 16px; background: var(--amber); color: #fff; border: none;
+    border-radius: 14px; font-size: 1.05rem; font-weight: 600; font-family: inherit; cursor: pointer;
+    box-shadow: var(--shadow-lg); transition: transform .12s, filter .15s; letter-spacing: .01em;
+  }
+  .btn-primary:hover { filter: brightness(1.05); }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-primary:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+  .btn-ghost {
+    width: 100%; padding: 13px; background: transparent; color: var(--pine);
+    border: 1.5px solid var(--line); border-radius: 12px; font-size: .95rem; font-weight: 600;
+    font-family: inherit; cursor: pointer; margin-top: 12px; transition: background .15s;
+  }
+  .btn-ghost:hover { background: var(--cream-2); }
+
+  .settings-row { display: flex; justify-content: flex-end; margin: 4px 2px 14px; }
+  .link-btn { background: none; border: none; color: var(--muted); font-family: inherit;
+    font-size: .82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .link-btn:hover { color: var(--pine); }
   .hidden { display: none; }
-  .meal-day { margin-bottom: 16px; }
-  .meal-day h3 { font-size: 0.95rem; color: var(--emerald-dark); border-bottom: 2px solid var(--emerald-light); padding-bottom: 4px; margin-bottom: 8px; }
-  .meal {
-    padding: 8px 0; border-bottom: 1px solid var(--border);
+  .hint { font-size: .76rem; color: var(--muted); margin: -8px 0 4px; }
+  .hint a { color: var(--pine); }
+
+  /* ---------- Results ---------- */
+  .result-head { text-align: center; margin: 30px 0 4px; }
+  .result-head .eyebrow { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--amber); font-weight: 600; }
+  .result-head h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.5rem; margin-top: 4px; }
+  .day { margin-bottom: 22px; }
+  .day > h3 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.1rem;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px; color: var(--pine);
   }
+  .day > h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .meal { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
   .meal:last-child { border-bottom: none; }
-  .meal .type { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; }
-  .meal .titre { font-weight: 600; font-size: 0.95rem; }
-  .meal .desc { font-size: 0.85rem; color: var(--muted); }
-  .store-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .store-badge { width: 10px; height: 10px; border-radius: 50%; }
-  .list-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 0.92rem; }
-  .list-item input { width: 18px; height: 18px; accent-color: var(--emerald); flex-shrink: 0; }
-  .list-item.checked span { text-decoration: line-through; color: var(--muted); }
-  .spinner {
-    display: inline-block; width: 18px; height: 18px;
-    border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+  .meal .dot { flex: none; width: 9px; height: 9px; border-radius: 50%; margin-top: 7px; }
+  .meal .type { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .meal .titre { font-weight: 600; font-size: 1rem; }
+  .meal .desc { font-size: .88rem; color: var(--muted); }
+
+  .store { margin-top: 20px; }
+  .store:first-child { margin-top: 4px; }
+  .store-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+  .store-head .badge { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: .9rem; }
+  .store-head h4 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.02rem; }
+  .item { display: flex; align-items: flex-start; gap: 11px; padding: 8px 0; cursor: pointer; font-size: .95rem; }
+  .item input { position: absolute; opacity: 0; }
+  .item .box {
+    flex: none; width: 21px; height: 21px; border: 2px solid var(--line); border-radius: 7px;
+    display: grid; place-items: center; margin-top: 1px; transition: all .15s;
   }
+  .item .box svg { width: 13px; height: 13px; opacity: 0; transform: scale(.5); transition: all .15s; }
+  .item input:checked + .box { background: var(--epicerie); border-color: var(--epicerie); }
+  .item input:checked + .box svg { opacity: 1; transform: scale(1); }
+  .item input:checked ~ span { text-decoration: line-through; color: var(--muted); }
+
+  /* ---------- Misc ---------- */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,.35);
+    border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -3px; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .error { background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; }
-  .hint { font-size: 0.75rem; color: var(--muted); margin-top: -6px; margin-bottom: 12px; }
-  .hint a { color: var(--emerald-dark); }
+  .error { background: rgba(178,59,59,.1); color: var(--boucherie); padding: 13px 15px; border-radius: 12px;
+    font-size: .88rem; margin-bottom: 14px; border: 1px solid rgba(178,59,59,.2); }
+  .fade-in { animation: fade .45s ease both; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  footer { text-align: center; font-size: .76rem; color: var(--muted); padding: 8px 0 40px; }
 </style>
 </head>
 <body>
-<header>
-  <h1>🍽️ Planif Repas — entre amis</h1>
-  <p>Dis-moi ton envie du moment, je m'occupe du reste</p>
+
+<header class="hero">
+  <div class="badge">ChaletMylène · Séjour 2026</div>
+  <h1 class="serif">Le week-end,<br>planifié en un <em>instant</em></h1>
+  <p>Dites-nous votre envie du moment — on compose les repas et les listes d'achats.</p>
 </header>
 
-<div class="container">
-
-  <div class="card">
-    <h2>Le séjour</h2>
-    <div class="row">
-      <div>
-        <label>Nombre de personnes</label>
-        <input type="number" id="nbPersonnes" value="4" min="1" max="20">
-      </div>
-      <div>
-        <label>Nombre de jours</label>
-        <input type="number" id="nbJours" value="3" min="1" max="14">
-      </div>
+<main>
+  <div class="card fade-in">
+    <div class="card-head"><span class="step-num">1</span><h2>Le séjour</h2></div>
+    <div class="grid2">
+      <div><label>Personnes</label><input type="number" id="nbPersonnes" value="4" min="1" max="20"></div>
+      <div><label>Jours</label><input type="number" id="nbJours" value="3" min="1" max="14"></div>
     </div>
-    <label>Participants (optionnel)</label>
-    <input type="text" id="participants" value="Mathilde, Miguel, Mylène, Jonathan" placeholder="Prénoms séparés par des virgules">
-    <label>Contexte (activités, contraintes, allergies…)</label>
-    <textarea id="contexte" placeholder="Ex. : arrivée vendredi 10h, départ dimanche 15h, BBQ dispo, sortie bateau samedi, aucune allergie"></textarea>
+    <label>Participants</label>
+    <input type="text" id="participants" value="Mathilde, Miguel, Mylène, Jonathan">
+    <label>Contexte — activités, contraintes, allergies</label>
+    <textarea id="contexte" placeholder="Ex. : arrivée vendredi 10 h, départ dimanche 15 h, BBQ dispo, sortie bateau samedi"></textarea>
   </div>
 
-  <div class="card">
-    <h2>Vos envies du moment 🎯</h2>
+  <div class="card fade-in" style="animation-delay:.05s">
+    <div class="card-head"><span class="step-num">2</span><h2>Vos envies</h2></div>
     <div class="chips" id="envies">
       <span class="chip" data-v="🔥 BBQ / grillades">🔥 BBQ</span>
       <span class="chip" data-v="🥗 Santé / léger">🥗 Léger</span>
@@ -154,94 +231,71 @@
       <span class="chip" data-v="🍷 Apéro / grignotage">🍷 Apéro</span>
     </div>
     <div class="slider-group">
-      <label>Budget</label>
+      <div class="top"><label style="margin:0">Budget</label><span class="val" id="budgetVal">Équilibré</span></div>
       <input type="range" id="budget" min="1" max="3" value="2">
-      <div class="labels"><span>Économique</span><span>Équilibré</span><span>Gastronomie</span></div>
+      <div class="ticks"><span>Économique</span><span>Équilibré</span><span>Gastronomie</span></div>
     </div>
     <div class="slider-group">
-      <label>Effort en cuisine</label>
+      <div class="top"><label style="margin:0">Effort en cuisine</label><span class="val" id="effortVal">Normal</span></div>
       <input type="range" id="effort" min="1" max="3" value="2">
-      <div class="labels"><span>Minimal</span><span>Normal</span><span>On cuisine</span></div>
+      <div class="ticks"><span>Minimal</span><span>Normal</span><span>On cuisine</span></div>
     </div>
   </div>
 
-  <div class="card">
-    <button class="settings-toggle" id="settingsToggle">⚙️ Clé API Claude</button>
-    <div id="settingsPanel" class="hidden" style="margin-top:12px;">
-      <label>Clé API Anthropic</label>
-      <input type="password" id="apiKey" placeholder="sk-ant-...">
-      <p class="hint">Stockée uniquement sur cet appareil (localStorage), jamais envoyée ailleurs qu'à l'API Claude. Obtenez une clé sur <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
-    </div>
+  <div class="settings-row">
+    <button class="link-btn" id="settingsToggle">⚙️ Clé API Claude</button>
+  </div>
+  <div id="settingsPanel" class="card hidden fade-in">
+    <label>Clé API Anthropic</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-…">
+    <p class="hint">Stockée uniquement sur cet appareil. Obtenez une clé sur <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
   </div>
 
   <div id="errorBox"></div>
-  <button class="primary" id="generateBtn">✨ Générer le plan</button>
+  <button class="btn-primary" id="generateBtn">✨ Composer le menu</button>
 
-  <div id="results" style="margin-top:20px;"></div>
+  <div id="results"></div>
 
-</div>
+  <footer>Généré avec Claude · pensé pour ChaletMylène 🌲</footer>
+</main>
 
 <script>
   const MODEL = "claude-opus-4-8";
   const $ = (id) => document.getElementById(id);
 
-  // Persist API key
   const savedKey = localStorage.getItem("anthropicKey");
   if (savedKey) $("apiKey").value = savedKey;
   $("apiKey").addEventListener("input", (e) => localStorage.setItem("anthropicKey", e.target.value.trim()));
-
-  // Settings toggle
   $("settingsToggle").addEventListener("click", () => $("settingsPanel").classList.toggle("hidden"));
 
-  // Chips
-  document.querySelectorAll("#envies .chip").forEach(chip => {
-    chip.addEventListener("click", () => chip.classList.toggle("active"));
-  });
+  document.querySelectorAll("#envies .chip").forEach(chip =>
+    chip.addEventListener("click", () => chip.classList.toggle("active")));
 
-  const budgetLabels = { "1": "économique", "2": "équilibré", "3": "gastronomie" };
-  const effortLabels = { "1": "minimal (peu de cuisine)", "2": "normal", "3": "on aime cuisiner" };
+  const budgetLabels = { "1": "Économique", "2": "Équilibré", "3": "Gastronomie" };
+  const effortLabels = { "1": "Minimal", "2": "Normal", "3": "On cuisine" };
+  $("budget").addEventListener("input", e => $("budgetVal").textContent = budgetLabels[e.target.value]);
+  $("effort").addEventListener("input", e => $("effortVal").textContent = effortLabels[e.target.value]);
+
+  const budgetPrompt = { "1": "économique", "2": "équilibré", "3": "gastronomie" };
+  const effortPrompt = { "1": "minimal (peu de cuisine)", "2": "normal", "3": "on aime cuisiner" };
 
   const SCHEMA = {
-    type: "object",
-    additionalProperties: false,
+    type: "object", additionalProperties: false,
     properties: {
-      repas: {
-        type: "array",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            jour: { type: "string" },
-            type_repas: { type: "string" },
-            titre: { type: "string" },
-            description: { type: "string" }
-          },
-          required: ["jour", "type_repas", "titre", "description"]
-        }
-      },
-      listes: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          boucherie: { type: "array", items: { type: "string" } },
-          saq: { type: "array", items: { type: "string" } },
-          epicerie: { type: "array", items: { type: "string" } }
-        },
-        required: ["boucherie", "saq", "epicerie"]
-      }
+      repas: { type: "array", items: { type: "object", additionalProperties: false,
+        properties: { jour: {type:"string"}, type_repas: {type:"string"}, titre: {type:"string"}, description: {type:"string"} },
+        required: ["jour","type_repas","titre","description"] } },
+      listes: { type: "object", additionalProperties: false,
+        properties: { boucherie: {type:"array",items:{type:"string"}}, saq: {type:"array",items:{type:"string"}}, epicerie: {type:"array",items:{type:"string"}} },
+        required: ["boucherie","saq","epicerie"] }
     },
-    required: ["repas", "listes"]
+    required: ["repas","listes"]
   };
 
   function buildPrompt() {
-    const nb = $("nbPersonnes").value;
-    const jours = $("nbJours").value;
-    const participants = $("participants").value.trim();
-    const contexte = $("contexte").value.trim();
+    const nb = $("nbPersonnes").value, jours = $("nbJours").value;
+    const participants = $("participants").value.trim(), contexte = $("contexte").value.trim();
     const envies = [...document.querySelectorAll("#envies .chip.active")].map(c => c.dataset.v);
-    const budget = budgetLabels[$("budget").value];
-    const effort = effortLabels[$("effort").value];
-
     return `Tu es un assistant de planification de repas pour un séjour entre amis (contexte québécois : SAQ pour l'alcool, "dîner" = midi, "souper" = soir).
 
 Détails du séjour :
@@ -250,13 +304,10 @@ Détails du séjour :
 - Participants : ${participants || "non précisés"}
 - Contexte : ${contexte || "aucun détail supplémentaire"}
 - Envies du moment : ${envies.length ? envies.join(", ") : "aucune préférence particulière"}
-- Budget : ${budget}
-- Effort en cuisine : ${effort}
+- Budget : ${budgetPrompt[$("budget").value]}
+- Effort en cuisine : ${effortPrompt[$("effort").value]}
 
-Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Puis produis les listes d'achats organisées par magasin :
-- boucherie (viandes)
-- saq (vins, bières, spiritueux)
-- epicerie (tout le reste)
+Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Puis produis les listes d'achats organisées par magasin : boucherie (viandes), saq (vins, bières, spiritueux), epicerie (tout le reste).
 
 IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${jours}). Chaque item de liste doit inclure une quantité concrète (ex. "6 poitrines de poulet", "2 bouteilles de vin rouge", "1 douzaine d'œufs"). Réponds en français.`;
   }
@@ -266,100 +317,87 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
     $("errorBox").innerHTML = "";
     if (!key) {
       $("settingsPanel").classList.remove("hidden");
-      $("errorBox").innerHTML = '<div class="error">Ajoute ta clé API Claude (⚙️) pour générer le plan.</div>';
+      $("errorBox").innerHTML = '<div class="error">Ajoutez votre clé API Claude (⚙️) pour composer le menu.</div>';
       return;
     }
-
     const btn = $("generateBtn");
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Génération en cours…';
+    btn.innerHTML = '<span class="spinner"></span>Composition en cours…';
     $("results").innerHTML = "";
-
     try {
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": key,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true"
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          max_tokens: 8000,
+        headers: { "content-type": "application/json", "x-api-key": key,
+          "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: MODEL, max_tokens: 8000,
           output_config: { format: { type: "json_schema", schema: SCHEMA } },
-          messages: [{ role: "user", content: buildPrompt() }]
-        })
+          messages: [{ role: "user", content: buildPrompt() }] })
       });
-
-      if (!resp.ok) {
-        const errText = await resp.text();
-        throw new Error("Erreur API (" + resp.status + ") : " + errText);
-      }
-
+      if (!resp.ok) throw new Error("Erreur API (" + resp.status + ") : " + (await resp.text()));
       const data = await resp.json();
-      const textBlock = (data.content || []).find(b => b.type === "text");
-      if (!textBlock) throw new Error("Réponse vide de l'API.");
-      const plan = JSON.parse(textBlock.text);
-      render(plan);
+      const tb = (data.content || []).find(b => b.type === "text");
+      if (!tb) throw new Error("Réponse vide de l'API.");
+      render(JSON.parse(tb.text));
     } catch (err) {
-      $("errorBox").innerHTML = '<div class="error">' + escapeHtml(err.message) + '</div>';
+      $("errorBox").innerHTML = '<div class="error">' + esc(err.message) + '</div>';
     } finally {
       btn.disabled = false;
-      btn.innerHTML = "✨ Générer le plan";
+      btn.innerHTML = "✨ Composer le menu";
     }
   }
 
-  function render(plan) {
-    // Group meals by day
-    const byDay = {};
-    (plan.repas || []).forEach(r => {
-      (byDay[r.jour] = byDay[r.jour] || []).push(r);
-    });
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
 
-    let html = '<div class="card"><h2>🍽️ Plan des repas</h2>';
+  function mealDot(type) {
+    const t = (type || "").toLowerCase();
+    if (t.includes("déjeun")) return "#e3a86b";
+    if (t.includes("dîner") || t.includes("diner") || t.includes("midi")) return "#3d7a5c";
+    if (t.includes("collation")) return "#c9682e";
+    if (t.includes("souper") || t.includes("soir")) return "#7b4b8a";
+    return "#1f4d3a";
+  }
+
+  function render(plan) {
+    const byDay = {};
+    (plan.repas || []).forEach(r => (byDay[r.jour] = byDay[r.jour] || []).push(r));
+
+    let html = '<div class="result-head fade-in"><div class="eyebrow">Votre menu</div><h2 class="serif">Le programme gourmand</h2></div>';
+    html += '<div class="card fade-in">';
     for (const jour of Object.keys(byDay)) {
-      html += '<div class="meal-day"><h3>' + escapeHtml(jour) + '</h3>';
+      html += '<div class="day"><h3>' + esc(jour) + '</h3>';
       byDay[jour].forEach(m => {
-        html += '<div class="meal"><div class="type">' + escapeHtml(m.type_repas) + '</div>' +
-                '<div class="titre">' + escapeHtml(m.titre) + '</div>' +
-                '<div class="desc">' + escapeHtml(m.description) + '</div></div>';
+        html += '<div class="meal"><span class="dot" style="background:' + mealDot(m.type_repas) + '"></span>' +
+          '<div><div class="type">' + esc(m.type_repas) + '</div>' +
+          '<div class="titre">' + esc(m.titre) + '</div>' +
+          '<div class="desc">' + esc(m.description) + '</div></div></div>';
       });
       html += '</div>';
     }
     html += '</div>';
 
     const stores = [
-      { key: "boucherie", label: "🥩 Boucherie", color: "var(--boucherie)" },
-      { key: "saq", label: "🍷 SAQ", color: "var(--saq)" },
-      { key: "epicerie", label: "🛍️ Épicerie", color: "var(--epicerie)" }
+      { key: "boucherie", label: "Boucherie", emoji: "🥩", bg: "rgba(178,59,59,.14)" },
+      { key: "saq", label: "SAQ", emoji: "🍷", bg: "rgba(123,75,138,.14)" },
+      { key: "epicerie", label: "Épicerie", emoji: "🛍️", bg: "rgba(47,125,84,.14)" }
     ];
-    html += '<div class="card"><h2>🛒 Listes d\'achats</h2>';
+    html += '<div class="card fade-in"><div class="card-head"><span class="step-num">🛒</span><h2>Listes d\'achats</h2></div>';
     stores.forEach(s => {
       const items = (plan.listes && plan.listes[s.key]) || [];
       if (!items.length) return;
-      html += '<div class="store-header" style="margin-top:14px;"><span class="store-badge" style="background:' + s.color + '"></span><strong>' + s.label + '</strong></div>';
+      html += '<div class="store"><div class="store-head"><span class="badge" style="background:' + s.bg + '">' + s.emoji + '</span><h4>' + s.label + '</h4></div>';
       items.forEach((item, i) => {
         const id = s.key + i;
-        html += '<label class="list-item" for="' + id + '"><input type="checkbox" id="' + id + '"><span>' + escapeHtml(item) + '</span></label>';
+        html += '<label class="item" for="' + id + '"><input type="checkbox" id="' + id + '"><span class="box">' + CHECK + '</span><span>' + esc(item) + '</span></label>';
       });
+      html += '</div>';
     });
     html += '</div>';
 
     $("results").innerHTML = html;
-
-    // Checkbox strike-through
-    $("results").querySelectorAll(".list-item input").forEach(cb => {
-      cb.addEventListener("change", () => cb.closest(".list-item").classList.toggle("checked", cb.checked));
-    });
-
-    $("results").scrollIntoView({ behavior: "smooth" });
+    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
-
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
   $("generateBtn").addEventListener("click", generate);
 </script>
 </body>
