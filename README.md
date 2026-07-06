@@ -5,6 +5,16 @@ Planification du séjour au chalet **ChaletMylène** — repas, collations et li
 **Groupe (4) :** Mathilde · Miguel · Mylène · Jonathan
 **Dates :** arrivée vendredi 10 h → départ dimanche 15 h
 
+## 🤖 L'app (en ligne)
+
+[`index.html`](index.html) — **Planif Repas**, une app web qui génère un plan de repas
+et des listes d'achats (Boucherie / SAQ / Épicerie) à partir de vos **envies du moment**,
+via l'API Claude. Ouvrez-la dans un navigateur, entrez votre clé API Anthropic (stockée
+localement), choisissez vos envies, et générez.
+
+Pour la mettre en ligne : activez **GitHub Pages** (Settings → Pages → branche `main`).
+L'app sera alors accessible par tout le groupe sur `https://th3jomasse.github.io/sejour-chalet-2026/`.
+
 ## Contenu
 
 - [`plan-chalet.md`](plan-chalet.md) — plan des repas (vendredi → dimanche), collations

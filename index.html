@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planif Repas — entre amis</title>
+<style>
+  :root {
+    --emerald: #059669;
+    --emerald-dark: #047857;
+    --emerald-light: #d1fae5;
+    --bg: #f8faf9;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --boucherie: #dc2626;
+    --saq: #7c3aed;
+    --epicerie: #059669;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 0 0 60px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+    color: #fff;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  header h1 { font-size: 1.35rem; margin-bottom: 4px; }
+  header p { font-size: 0.85rem; opacity: 0.9; }
+  .container { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 { font-size: 1rem; margin-bottom: 12px; color: var(--emerald-dark); }
+  label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+  input[type="text"], input[type="number"], input[type="password"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  textarea { min-height: 60px; resize: vertical; }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .chip.active { background: var(--emerald); color: #fff; border-color: var(--emerald); }
+  .slider-group { margin-bottom: 16px; }
+  .slider-group .labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+  input[type="range"] { width: 100%; accent-color: var(--emerald); }
+  button.primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--emerald);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.primary:active { background: var(--emerald-dark); }
+  .settings-toggle {
+    background: none; border: none; color: var(--emerald-dark);
+    font-size: 0.85rem; cursor: pointer; text-decoration: underline; padding: 0;
+  }
+  .hidden { display: none; }
+  .meal-day { margin-bottom: 16px; }
+  .meal-day h3 { font-size: 0.95rem; color: var(--emerald-dark); border-bottom: 2px solid var(--emerald-light); padding-bottom: 4px; margin-bottom: 8px; }
+  .meal {
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .meal:last-child { border-bottom: none; }
+  .meal .type { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; }
+  .meal .titre { font-weight: 600; font-size: 0.95rem; }
+  .meal .desc { font-size: 0.85rem; color: var(--muted); }
+  .store-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .store-badge { width: 10px; height: 10px; border-radius: 50%; }
+  .list-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 0.92rem; }
+  .list-item input { width: 18px; height: 18px; accent-color: var(--emerald); flex-shrink: 0; }
+  .list-item.checked span { text-decoration: line-through; color: var(--muted); }
+  .spinner {
+    display: inline-block; width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error { background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; }
+  .hint { font-size: 0.75rem; color: var(--muted); margin-top: -6px; margin-bottom: 12px; }
+  .hint a { color: var(--emerald-dark); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🍽️ Planif Repas — entre amis</h1>
+  <p>Dis-moi ton envie du moment, je m'occupe du reste</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Le séjour</h2>
+    <div class="row">
+      <div>
+        <label>Nombre de personnes</label>
+        <input type="number" id="nbPersonnes" value="4" min="1" max="20">
+      </div>
+      <div>
+        <label>Nombre de jours</label>
+        <input type="number" id="nbJours" value="3" min="1" max="14">
+      </div>
+    </div>
+    <label>Participants (optionnel)</label>
+    <input type="text" id="participants" value="Mathilde, Miguel, Mylène, Jonathan" placeholder="Prénoms séparés par des virgules">
+    <label>Contexte (activités, contraintes, allergies…)</label>
+    <textarea id="contexte" placeholder="Ex. : arrivée vendredi 10h, départ dimanche 15h, BBQ dispo, sortie bateau samedi, aucune allergie"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>Vos envies du moment 🎯</h2>
+    <div class="chips" id="envies">
+      <span class="chip" data-v="🔥 BBQ / grillades">🔥 BBQ</span>
+      <span class="chip" data-v="🥗 Santé / léger">🥗 Léger</span>
+      <span class="chip" data-v="🍝 Réconfortant">🍝 Réconfortant</span>
+      <span class="chip" data-v="🌶️ Épicé">🌶️ Épicé</span>
+      <span class="chip" data-v="🐟 Poisson / fruits de mer">🐟 Mer</span>
+      <span class="chip" data-v="🍔 Comfort food">🍔 Comfort</span>
+      <span class="chip" data-v="🌱 Végé">🌱 Végé</span>
+      <span class="chip" data-v="⏱️ Rapide / facile">⏱️ Facile</span>
+      <span class="chip" data-v="🍷 Apéro / grignotage">🍷 Apéro</span>
+    </div>
+    <div class="slider-group">
+      <label>Budget</label>
+      <input type="range" id="budget" min="1" max="3" value="2">
+      <div class="labels"><span>Économique</span><span>Équilibré</span><span>Gastronomie</span></div>
+    </div>
+    <div class="slider-group">
+      <label>Effort en cuisine</label>
+      <input type="range" id="effort" min="1" max="3" value="2">
+      <div class="labels"><span>Minimal</span><span>Normal</span><span>On cuisine</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <button class="settings-toggle" id="settingsToggle">⚙️ Clé API Claude</button>
+    <div id="settingsPanel" class="hidden" style="margin-top:12px;">
+      <label>Clé API Anthropic</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-...">
+      <p class="hint">Stockée uniquement sur cet appareil (localStorage), jamais envoyée ailleurs qu'à l'API Claude. Obtenez une clé sur <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+    </div>
+  </div>
+
+  <div id="errorBox"></div>
+  <button class="primary" id="generateBtn">✨ Générer le plan</button>
+
+  <div id="results" style="margin-top:20px;"></div>
+
+</div>
+
+<script>
+  const MODEL = "claude-opus-4-8";
+  const $ = (id) => document.getElementById(id);
+
+  // Persist API key
+  const savedKey = localStorage.getItem("anthropicKey");
+  if (savedKey) $("apiKey").value = savedKey;
+  $("apiKey").addEventListener("input", (e) => localStorage.setItem("anthropicKey", e.target.value.trim()));
+
+  // Settings toggle
+  $("settingsToggle").addEventListener("click", () => $("settingsPanel").classList.toggle("hidden"));
+
+  // Chips
+  document.querySelectorAll("#envies .chip").forEach(chip => {
+    chip.addEventListener("click", () => chip.classList.toggle("active"));
+  });
+
+  const budgetLabels = { "1": "économique", "2": "équilibré", "3": "gastronomie" };
+  const effortLabels = { "1": "minimal (peu de cuisine)", "2": "normal", "3": "on aime cuisiner" };
+
+  const SCHEMA = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      repas: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            jour: { type: "string" },
+            type_repas: { type: "string" },
+            titre: { type: "string" },
+            description: { type: "string" }
+          },
+          required: ["jour", "type_repas", "titre", "description"]
+        }
+      },
+      listes: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          boucherie: { type: "array", items: { type: "string" } },
+          saq: { type: "array", items: { type: "string" } },
+          epicerie: { type: "array", items: { type: "string" } }
+        },
+        required: ["boucherie", "saq", "epicerie"]
+      }
+    },
+    required: ["repas", "listes"]
+  };
+
+  function buildPrompt() {
+    const nb = $("nbPersonnes").value;
+    const jours = $("nbJours").value;
+    const participants = $("participants").value.trim();
+    const contexte = $("contexte").value.trim();
+    const envies = [...document.querySelectorAll("#envies .chip.active")].map(c => c.dataset.v);
+    const budget = budgetLabels[$("budget").value];
+    const effort = effortLabels[$("effort").value];
+
+    return `Tu es un assistant de planification de repas pour un séjour entre amis (contexte québécois : SAQ pour l'alcool, "dîner" = midi, "souper" = soir).
+
+Détails du séjour :
+- Nombre de personnes : ${nb}
+- Nombre de jours : ${jours}
+- Participants : ${participants || "non précisés"}
+- Contexte : ${contexte || "aucun détail supplémentaire"}
+- Envies du moment : ${envies.length ? envies.join(", ") : "aucune préférence particulière"}
+- Budget : ${budget}
+- Effort en cuisine : ${effort}
+
+Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Puis produis les listes d'achats organisées par magasin :
+- boucherie (viandes)
+- saq (vins, bières, spiritueux)
+- epicerie (tout le reste)
+
+IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${jours}). Chaque item de liste doit inclure une quantité concrète (ex. "6 poitrines de poulet", "2 bouteilles de vin rouge", "1 douzaine d'œufs"). Réponds en français.`;
+  }
+
+  async function generate() {
+    const key = $("apiKey").value.trim();
+    $("errorBox").innerHTML = "";
+    if (!key) {
+      $("settingsPanel").classList.remove("hidden");
+      $("errorBox").innerHTML = '<div class="error">Ajoute ta clé API Claude (⚙️) pour générer le plan.</div>';
+      return;
+    }
+
+    const btn = $("generateBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Génération en cours…';
+    $("results").innerHTML = "";
+
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": key,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 8000,
+          output_config: { format: { type: "json_schema", schema: SCHEMA } },
+          messages: [{ role: "user", content: buildPrompt() }]
+        })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error("Erreur API (" + resp.status + ") : " + errText);
+      }
+
+      const data = await resp.json();
+      const textBlock = (data.content || []).find(b => b.type === "text");
+      if (!textBlock) throw new Error("Réponse vide de l'API.");
+      const plan = JSON.parse(textBlock.text);
+      render(plan);
+    } catch (err) {
+      $("errorBox").innerHTML = '<div class="error">' + escapeHtml(err.message) + '</div>';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "✨ Générer le plan";
+    }
+  }
+
+  function render(plan) {
+    // Group meals by day
+    const byDay = {};
+    (plan.repas || []).forEach(r => {
+      (byDay[r.jour] = byDay[r.jour] || []).push(r);
+    });
+
+    let html = '<div class="card"><h2>🍽️ Plan des repas</h2>';
+    for (const jour of Object.keys(byDay)) {
+      html += '<div class="meal-day"><h3>' + escapeHtml(jour) + '</h3>';
+      byDay[jour].forEach(m => {
+        html += '<div class="meal"><div class="type">' + escapeHtml(m.type_repas) + '</div>' +
+                '<div class="titre">' + escapeHtml(m.titre) + '</div>' +
+                '<div class="desc">' + escapeHtml(m.description) + '</div></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+
+    const stores = [
+      { key: "boucherie", label: "🥩 Boucherie", color: "var(--boucherie)" },
+      { key: "saq", label: "🍷 SAQ", color: "var(--saq)" },
+      { key: "epicerie", label: "🛍️ Épicerie", color: "var(--epicerie)" }
+    ];
+    html += '<div class="card"><h2>🛒 Listes d\'achats</h2>';
+    stores.forEach(s => {
+      const items = (plan.listes && plan.listes[s.key]) || [];
+      if (!items.length) return;
+      html += '<div class="store-header" style="margin-top:14px;"><span class="store-badge" style="background:' + s.color + '"></span><strong>' + s.label + '</strong></div>';
+      items.forEach((item, i) => {
+        const id = s.key + i;
+        html += '<label class="list-item" for="' + id + '"><input type="checkbox" id="' + id + '"><span>' + escapeHtml(item) + '</span></label>';
+      });
+    });
+    html += '</div>';
+
+    $("results").innerHTML = html;
+
+    // Checkbox strike-through
+    $("results").querySelectorAll(".list-item input").forEach(cb => {
+      cb.addEventListener("change", () => cb.closest(".list-item").classList.toggle("checked", cb.checked));
+    });
+
+    $("results").scrollIntoView({ behavior: "smooth" });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  $("generateBtn").addEventListener("click", generate);
+</script>
+</body>
+</html>
