@@ -1,0 +1,13 @@
+{
+  "name": "planif-repas-functions",
+  "description": "Cloud Function qui appelle l'API Claude pour générer le plan de repas",
+  "type": "module",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.1.0"
+  },
+  "private": true
+}

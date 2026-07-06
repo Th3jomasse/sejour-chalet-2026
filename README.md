@@ -5,15 +5,23 @@ Planification du séjour au chalet **ChaletMylène** — repas, collations et li
 **Groupe (4) :** Mathilde · Miguel · Mylène · Jonathan
 **Dates :** arrivée vendredi 10 h → départ dimanche 15 h
 
-## 🤖 L'app (en ligne)
+## 🤖 L'app — deux versions
 
-[`index.html`](index.html) — **Planif Repas**, une app web qui génère un plan de repas
-et des listes d'achats (Boucherie / SAQ / Épicerie) à partir de vos **envies du moment**,
-via l'API Claude. Ouvrez-la dans un navigateur, entrez votre clé API Anthropic (stockée
-localement), choisissez vos envies, et générez.
+### Version Firebase (recommandée) — `public/index.html`
+App complète connectée au projet Firebase **ChaletMylène** :
+- **Hébergement** gratuit sur une URL publique (`https://chaletmylene.web.app`)
+- **Clé API cachée** côté serveur (Cloud Function `generatePlan`) — les amis n'entrent aucune clé
+- **Listes partagées en temps réel** (Firestore) — cases à cocher synchronisées entre les téléphones
+- **Vote de groupe** 👍/👎 sur chaque repas + bouton « Régénérer selon les votes »
 
-Pour la mettre en ligne : activez **GitHub Pages** (Settings → Pages → branche `main`).
-L'app sera alors accessible par tout le groupe sur `https://th3jomasse.github.io/sejour-chalet-2026/`.
+Structure : `firebase.json`, `.firebaserc`, `firestore.rules`, `functions/` (Cloud Function),
+`public/` (l'app). Avant de déployer, remplace `firebaseConfig` dans `public/index.html`
+par la config de ton app web Firebase, et enregistre la clé Claude comme secret :
+`firebase functions:secrets:set ANTHROPIC_API_KEY`. Puis `firebase deploy`.
+
+### Version standalone — `index.html`
+Même app, mais chaque personne entre **sa propre clé API Claude** (stockée localement).
+Fonctionne sans backend — ouvre le fichier dans un navigateur, ou héberge via GitHub Pages.
 
 ## Contenu
 
