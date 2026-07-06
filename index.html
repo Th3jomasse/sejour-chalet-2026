@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1f4d3a">
 <title>Planif Repas — ChaletMylène</title>
+<meta name="description" content="Composez vos repas de week-end et vos listes d'achats (Boucherie, SAQ, Épicerie) selon vos envies du moment.">
+<meta property="og:title" content="Planif Repas — ChaletMylène">
+<meta property="og:description" content="Vos envies du moment → le menu du week-end et les listes d'achats, en un instant.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🍽️</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231f4d3a'/><text x='50' y='72' font-size='58' text-anchor='middle'>🍽️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -194,6 +202,31 @@
   .fade-in { animation: fade .45s ease both; }
   @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   footer { text-align: center; font-size: .76rem; color: var(--muted); padding: 8px 0 40px; }
+
+  .actions { display: flex; gap: 10px; margin: 6px 0 2px; }
+  .actions button {
+    flex: 1; padding: 12px 8px; border: 1.5px solid var(--line); background: var(--surface); color: var(--pine);
+    border-radius: 12px; font-family: inherit; font-weight: 600; font-size: .9rem; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: background .15s;
+  }
+  .actions button:hover { background: var(--cream-2); }
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--cream); padding: 11px 20px; border-radius: 100px;
+    font-size: .88rem; font-weight: 500; opacity: 0; pointer-events: none; transition: all .3s ease; z-index: 60;
+    box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .restored-note { font-size: .76rem; color: var(--muted); text-align: center; margin-top: -2px; margin-bottom: 10px; }
+
+  @media print {
+    header.hero, main > .card, .settings-row, #generateBtn, .actions, .btn-ghost, footer, .result-head .eyebrow { display: none !important; }
+    body { background: #fff; color: #000; }
+    main { margin: 0; padding: 14px; max-width: 100%; }
+    #results .card { box-shadow: none; border: none; padding: 0; page-break-inside: auto; }
+    .day, .store, .meal { page-break-inside: avoid; }
+    .result-head { margin-top: 0; }
+  }
 </style>
 </head>
 <body>
@@ -258,6 +291,8 @@
 
   <footer>Généré avec Claude · pensé pour ChaletMylène 🌲</footer>
 </main>
+
+<div class="toast" id="toast"></div>
 
 <script>
   const MODEL = "claude-opus-4-8";
@@ -357,11 +392,13 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
     return "#1f4d3a";
   }
 
-  function render(plan) {
+  function render(plan, opts) {
+    opts = opts || {};
     const byDay = {};
     (plan.repas || []).forEach(r => (byDay[r.jour] = byDay[r.jour] || []).push(r));
 
     let html = '<div class="result-head fade-in"><div class="eyebrow">Votre menu</div><h2 class="serif">Le programme gourmand</h2></div>';
+    if (opts.restored) html += '<div class="restored-note fade-in">Dernier menu enregistré · « Générer un nouveau menu » pour recomposer</div>';
     html += '<div class="card fade-in">';
     for (const jour of Object.keys(byDay)) {
       html += '<div class="day"><h3>' + esc(jour) + '</h3>';
@@ -393,12 +430,63 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
     });
     html += '</div>';
 
+    const canShare = typeof navigator !== "undefined" && !!navigator.share;
+    html += '<div class="actions">' +
+      '<button id="copyBtn">📋 Copier</button>' +
+      (canShare ? '<button id="shareBtn">📤 Partager</button>' : '') +
+      '<button id="printBtn">🖨️ Imprimer</button></div>' +
+      '<button class="btn-ghost" id="regenBtn">🔄 Générer un nouveau menu</button>';
+
     $("results").innerHTML = html;
-    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+
+    $("copyBtn").addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(planToText(plan)); toast("Liste copiée ✓"); }
+      catch (e) { toast("Copie impossible"); }
+    });
+    const sb = $("shareBtn");
+    if (sb) sb.addEventListener("click", () =>
+      navigator.share({ title: "Menu — ChaletMylène", text: planToText(plan) }).catch(() => {}));
+    $("printBtn").addEventListener("click", () => window.print());
+    $("regenBtn").addEventListener("click", generate);
+
+    try { localStorage.setItem("lastPlan", JSON.stringify(plan)); } catch (e) {}
+    if (!opts.skipScroll) $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function planToText(plan) {
+    let out = "🍽️ MENU — ChaletMylène\n";
+    const byDay = {};
+    (plan.repas || []).forEach(r => (byDay[r.jour] = byDay[r.jour] || []).push(r));
+    for (const jour of Object.keys(byDay)) {
+      out += "\n" + jour.toUpperCase() + "\n";
+      byDay[jour].forEach(m => { out += "· " + m.type_repas + " — " + m.titre + "\n"; });
+    }
+    const L = plan.listes || {};
+    const block = (emoji, name, arr) => (arr && arr.length) ? "\n" + emoji + " " + name + "\n" + arr.map(i => "☐ " + i).join("\n") + "\n" : "";
+    out += "\n— — — LISTES D'ACHATS — — —\n";
+    out += block("🥩", "BOUCHERIE", L.boucherie);
+    out += block("🍷", "SAQ", L.saq);
+    out += block("🛍️", "ÉPICERIE", L.epicerie);
+    return out.trim();
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
   }
 
   function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
   $("generateBtn").addEventListener("click", generate);
+
+  // Restaure le dernier menu généré sur cet appareil
+  try {
+    const saved = localStorage.getItem("lastPlan");
+    if (saved) render(JSON.parse(saved), { skipScroll: true, restored: true });
+  } catch (e) {}
 </script>
 </body>
 </html>
