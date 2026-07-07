@@ -34,9 +34,10 @@ const SCHEMA = {
         epicerie: { type: "array", items: { type: "string" } }
       },
       required: ["boucherie", "saq", "epicerie"]
-    }
+    },
+    collations: { type: "array", items: { type: "string" } }
   },
-  required: ["repas", "listes"]
+  required: ["repas", "listes", "collations"]
 };
 
 function buildPrompt(p) {
@@ -56,7 +57,7 @@ Détails du séjour :
 - Budget : ${p.budget || "équilibré"}
 - Effort en cuisine : ${p.effort || "normal"}${feedback}
 
-Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Puis produis les listes d'achats organisées par magasin : boucherie (viandes), saq (vins, bières, spiritueux), epicerie (tout le reste).
+Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Ajoute une liste "collations" : idées de grignotines pour tout le séjour (chips, noix, fruits, etc.). Puis produis les listes d'achats organisées par magasin : boucherie (viandes), saq (vins, bières, spiritueux), epicerie (tout le reste).
 
 IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${p.nbPersonnes || 4}) et de jours (${p.nbJours || 3}). Chaque item de liste doit inclure une quantité concrète (ex. "6 poitrines de poulet", "2 bouteilles de vin rouge", "1 douzaine d'œufs"). Réponds en français.`;
 }

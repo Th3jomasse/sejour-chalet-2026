@@ -120,6 +120,10 @@
   .vbtn:active { transform: scale(.94); }
   .vbtn.up.mine { background: rgba(47,125,84,.14); border-color: var(--epicerie); color: var(--epicerie); }
   .vbtn.down.mine { background: rgba(178,59,59,.12); border-color: var(--boucherie); color: var(--boucherie); }
+  .collations { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 16px; }
+  .collations h3 { font-size: 1rem; color: var(--pine); margin-bottom: 10px; }
+  .coll-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .coll-tag { background: var(--cream-2); border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; font-size: .85rem; }
   .store { margin-top: 20px; } .store:first-child { margin-top: 4px; }
   .store-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
   .store-head .badge { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: .9rem; }
@@ -208,6 +212,7 @@
 
   <div id="errorBox"></div>
   <button class="btn-primary" id="generateBtn" disabled>✨ Composer le menu</button>
+  <button class="btn-ghost hidden" id="installBtn">📲 Installer l'app</button>
 
   <div id="results" aria-live="polite"></div>
   <footer>Généré avec Claude · partagé en temps réel · ChaletMylène 🌲</footer>
@@ -346,6 +351,10 @@
       });
       html += '</div>';
     }
+    if (plan.collations && plan.collations.length) {
+      html += '<div class="collations"><h3 class="serif">🍿 Collations</h3><div class="coll-tags">' +
+        plan.collations.map(c => '<span class="coll-tag">' + esc(c) + '</span>').join('') + '</div></div>';
+    }
     html += '</div>';
 
     const stores = [
@@ -398,6 +407,7 @@
     const byDay = {};
     (plan.repas || []).forEach(r => (byDay[r.jour] = byDay[r.jour] || []).push(r));
     for (const jour of Object.keys(byDay)) { out += "\n" + jour.toUpperCase() + "\n"; byDay[jour].forEach(m => out += "· " + m.type_repas + " — " + m.titre + "\n"); }
+    if (plan.collations && plan.collations.length) out += "\n🍿 COLLATIONS\n" + plan.collations.map(c => "· " + c).join("\n") + "\n";
     const L = plan.listes || {};
     const block = (e, n, a) => (a && a.length) ? "\n" + e + " " + n + "\n" + a.map(i => "☐ " + i).join("\n") + "\n" : "";
     out += "\n— — — LISTES D'ACHATS — — —\n" + block("🥩", "BOUCHERIE", L.boucherie) + block("🍷", "SAQ", L.saq) + block("🛍️", "ÉPICERIE", L.epicerie);
@@ -410,6 +420,24 @@
   function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
   $("generateBtn").addEventListener("click", () => generate());
+
+  // Bouton « Installer l'app » (Android/Chrome ; iOS = Partager → Ajouter à l'écran d'accueil)
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); deferredPrompt = e; $("installBtn").classList.remove("hidden");
+  });
+  $("installBtn").addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null; $("installBtn").classList.add("hidden");
+  });
+  window.addEventListener("appinstalled", () => $("installBtn").classList.add("hidden"));
+
+  // Mode hors-ligne
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
 </script>
 </body>
 </html>

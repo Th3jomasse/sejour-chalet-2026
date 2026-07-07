@@ -183,6 +183,10 @@
   .meal .titre { font-weight: 600; font-size: 1rem; }
   .meal .desc { font-size: .88rem; color: var(--muted); }
 
+  .collations { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 16px; }
+  .collations h3 { font-size: 1rem; color: var(--pine); margin-bottom: 10px; }
+  .coll-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .coll-tag { background: var(--cream-2); border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; font-size: .85rem; }
   .store { margin-top: 20px; }
   .store:first-child { margin-top: 4px; }
   .store-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
@@ -298,6 +302,7 @@
 
   <div id="errorBox"></div>
   <button class="btn-primary" id="generateBtn">✨ Composer le menu</button>
+  <button class="btn-ghost hidden" id="installBtn">📲 Installer l'app</button>
 
   <div id="results" aria-live="polite"></div>
 
@@ -340,9 +345,10 @@
         required: ["jour","type_repas","titre","description"] } },
       listes: { type: "object", additionalProperties: false,
         properties: { boucherie: {type:"array",items:{type:"string"}}, saq: {type:"array",items:{type:"string"}}, epicerie: {type:"array",items:{type:"string"}} },
-        required: ["boucherie","saq","epicerie"] }
+        required: ["boucherie","saq","epicerie"] },
+      collations: { type: "array", items: { type: "string" } }
     },
-    required: ["repas","listes"]
+    required: ["repas","listes","collations"]
   };
 
   function buildPrompt() {
@@ -360,7 +366,7 @@ Détails du séjour :
 - Budget : ${budgetPrompt[$("budget").value]}
 - Effort en cuisine : ${effortPrompt[$("effort").value]}
 
-Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Puis produis les listes d'achats organisées par magasin : boucherie (viandes), saq (vins, bières, spiritueux), epicerie (tout le reste).
+Génère un plan de repas complet et cohérent pour tout le séjour (déjeuner, dîner, collation, souper selon les jours et le contexte), en respectant les envies. Ajoute une liste "collations" : idées de grignotines pour tout le séjour (chips, noix, fruits, etc.). Puis produis les listes d'achats organisées par magasin : boucherie (viandes), saq (vins, bières, spiritueux), epicerie (tout le reste).
 
 IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${jours}). Chaque item de liste doit inclure une quantité concrète (ex. "6 poitrines de poulet", "2 bouteilles de vin rouge", "1 douzaine d'œufs"). Réponds en français.`;
   }
@@ -439,6 +445,10 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
       });
       html += '</div>';
     }
+    if (plan.collations && plan.collations.length) {
+      html += '<div class="collations"><h3 class="serif">🍿 Collations</h3><div class="coll-tags">' +
+        plan.collations.map(c => '<span class="coll-tag">' + esc(c) + '</span>').join('') + '</div></div>';
+    }
     html += '</div>';
 
     const stores = [
@@ -490,6 +500,7 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
       out += "\n" + jour.toUpperCase() + "\n";
       byDay[jour].forEach(m => { out += "· " + m.type_repas + " — " + m.titre + "\n"; });
     }
+    if (plan.collations && plan.collations.length) out += "\n🍿 COLLATIONS\n" + plan.collations.map(c => "· " + c).join("\n") + "\n";
     const L = plan.listes || {};
     const block = (emoji, name, arr) => (arr && arr.length) ? "\n" + emoji + " " + name + "\n" + arr.map(i => "☐ " + i).join("\n") + "\n" : "";
     out += "\n— — — LISTES D'ACHATS — — —\n";
@@ -516,6 +527,24 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
     const saved = localStorage.getItem("lastPlan");
     if (saved) render(JSON.parse(saved), { skipScroll: true, restored: true });
   } catch (e) {}
+
+  // Bouton « Installer l'app » (Android/Chrome ; iOS = Partager → Ajouter à l'écran d'accueil)
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); deferredPrompt = e; $("installBtn").classList.remove("hidden");
+  });
+  $("installBtn").addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null; $("installBtn").classList.add("hidden");
+  });
+  window.addEventListener("appinstalled", () => $("installBtn").classList.add("hidden"));
+
+  // Mode hors-ligne
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
 </script>
 </body>
 </html>
