@@ -10,9 +10,15 @@
 <meta property="og:description" content="Vos envies du moment → le menu du week-end et les listes d'achats, partagés en temps réel.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://chaletmylene.web.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://chaletmylene.web.app/og-image.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🍽️</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231f4d3a'/><text x='50' y='72' font-size='58' text-anchor='middle'>🍽️</text></svg>">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -203,7 +209,7 @@
   <div id="errorBox"></div>
   <button class="btn-primary" id="generateBtn" disabled>✨ Composer le menu</button>
 
-  <div id="results"></div>
+  <div id="results" aria-live="polite"></div>
   <footer>Généré avec Claude · partagé en temps réel · ChaletMylène 🌲</footer>
 </main>
 
@@ -219,8 +225,14 @@
   let uid = null, currentData = null;
   let db, auth, generatePlan, sejourRef;
 
-  document.querySelectorAll("#envies .chip").forEach(chip =>
-    chip.addEventListener("click", () => chip.classList.toggle("active")));
+  document.querySelectorAll("#envies .chip").forEach(chip => {
+    chip.setAttribute("role", "button");
+    chip.setAttribute("tabindex", "0");
+    chip.setAttribute("aria-pressed", "false");
+    const toggle = () => chip.setAttribute("aria-pressed", chip.classList.toggle("active") ? "true" : "false");
+    chip.addEventListener("click", toggle);
+    chip.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
 
   const budgetLabels = { "1": "Économique", "2": "Équilibré", "3": "Gastronomie" };
   const effortLabels = { "1": "Minimal", "2": "Normal", "3": "On cuisine" };

@@ -10,9 +10,15 @@
 <meta property="og:description" content="Vos envies du moment → le menu du week-end et les listes d'achats, en un instant.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://th3jomasse.github.io/sejour-chalet-2026/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://th3jomasse.github.io/sejour-chalet-2026/og-image.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🍽️</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231f4d3a'/><text x='50' y='72' font-size='58' text-anchor='middle'>🍽️</text></svg>">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -218,6 +224,12 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .restored-note { font-size: .76rem; color: var(--muted); text-align: center; margin-top: -2px; margin-bottom: 10px; }
+  .sk { background: linear-gradient(90deg, rgba(120,120,120,.13) 25%, rgba(120,120,120,.30) 50%, rgba(120,120,120,.13) 75%);
+    background-size: 300% 100%; animation: shimmer 1.3s ease infinite; border-radius: 8px; }
+  @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+  .sk-title { height: 22px; width: 55%; margin: 4px auto 22px; }
+  .sk-line { height: 13px; margin: 13px 0; }
+  .sk-line.short { width: 62%; }
 
   @media print {
     header.hero, main > .card, .settings-row, #generateBtn, .actions, .btn-ghost, footer, .result-head .eyebrow { display: none !important; }
@@ -287,7 +299,7 @@
   <div id="errorBox"></div>
   <button class="btn-primary" id="generateBtn">✨ Composer le menu</button>
 
-  <div id="results"></div>
+  <div id="results" aria-live="polite"></div>
 
   <footer>Généré avec Claude · pensé pour ChaletMylène 🌲</footer>
 </main>
@@ -303,8 +315,14 @@
   $("apiKey").addEventListener("input", (e) => localStorage.setItem("anthropicKey", e.target.value.trim()));
   $("settingsToggle").addEventListener("click", () => $("settingsPanel").classList.toggle("hidden"));
 
-  document.querySelectorAll("#envies .chip").forEach(chip =>
-    chip.addEventListener("click", () => chip.classList.toggle("active")));
+  document.querySelectorAll("#envies .chip").forEach(chip => {
+    chip.setAttribute("role", "button");
+    chip.setAttribute("tabindex", "0");
+    chip.setAttribute("aria-pressed", "false");
+    const toggle = () => chip.setAttribute("aria-pressed", chip.classList.toggle("active") ? "true" : "false");
+    chip.addEventListener("click", toggle);
+    chip.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+  });
 
   const budgetLabels = { "1": "Économique", "2": "Équilibré", "3": "Gastronomie" };
   const effortLabels = { "1": "Minimal", "2": "Normal", "3": "On cuisine" };
@@ -357,8 +375,9 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
     }
     const btn = $("generateBtn");
     btn.disabled = true;
+    btn.setAttribute("aria-busy", "true");
     btn.innerHTML = '<span class="spinner"></span>Composition en cours…';
-    $("results").innerHTML = "";
+    $("results").innerHTML = skeleton();
     try {
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -374,11 +393,21 @@ IMPORTANT : ajuste les QUANTITÉS au nombre de personnes (${nb}) et de jours (${
       if (!tb) throw new Error("Réponse vide de l'API.");
       render(JSON.parse(tb.text));
     } catch (err) {
+      $("results").innerHTML = "";
       $("errorBox").innerHTML = '<div class="error">' + esc(err.message) + '</div>';
     } finally {
       btn.disabled = false;
+      btn.removeAttribute("aria-busy");
       btn.innerHTML = "✨ Composer le menu";
     }
+  }
+
+  function skeleton() {
+    let lines = "";
+    for (let i = 0; i < 5; i++) lines += '<div class="sk sk-line' + (i % 3 === 2 ? ' short' : '') + '"></div>';
+    return '<div class="result-head fade-in"><div class="sk sk-title"></div></div>' +
+      '<div class="card fade-in">' + lines + '</div>' +
+      '<div class="card fade-in">' + lines + '</div>';
   }
 
   const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
